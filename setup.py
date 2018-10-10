@@ -12,14 +12,14 @@ requires = [
 
 setup(
     name="ops-lambda-python-helpers",
-    version="0.0.1",
+    version="0.0.2",
     author="David Fort",
     author_email="ptiger10@gmail.com",
     description="Helper functions for use with ops lambda functions",
     long_description=long_description,
     long_description_content_type="text/markdown",
     # packages=find_packages(exclude=["test"]),
-    py_modules=['helpers'],
+    py_modules=['ops_helpers'],
     incude_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
