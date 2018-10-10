@@ -1,19 +1,16 @@
 import json
-from os import path, getcwd
+from os import path
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 
-WORKDIR = getcwd()
-
 
 # [START event validation]
-# NB: Tightly coupled to layout of Operations-FAAS directory
 def validate_event(event, schema: str) -> None:
     "Compare event input to object required by schema"
     SCHEMA = path.abspath(
         path.join(
-            path.dirname(WORKDIR),
-            f'../functions/schemas//{schema}'   
+            path.dirname(__file__),
+            f'../schemas//{schema}'
         )
     )
 
