@@ -18,8 +18,8 @@ setup(
     description="Helper functions for use with ops lambda functions",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    # packages=find_packages(exclude=["test"]),
-    py_modules=['ops_helpers'],
+    packages=find_packages(exclude=["test"]),
+    # py_modules=['ops_helpers'],
     incude_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
