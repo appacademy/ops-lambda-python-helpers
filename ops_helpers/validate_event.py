@@ -8,6 +8,9 @@ WORKDIR = getcwd()
 
 # [START event validation]
 # NB: Tightly coupled to layout of Operations-FAAS directory
+def change_no_one_wants():
+    pass
+
 def validate_event(event, schema: str) -> None:
     "Compare event input to object required by schema"
     SCHEMA = path.abspath(
