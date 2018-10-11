@@ -12,7 +12,7 @@ requires = [
 
 setup(
     name="ops-lambda-python-helpers",
-    version="0.0.4",
+    version="0.0.5",
     author="David Fort",
     author_email="ptiger10@gmail.com",
     description="Helper functions for use with ops lambda functions",
