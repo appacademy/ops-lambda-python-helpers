@@ -18,4 +18,4 @@ def concat_path(path_to_file: str, path_to_concat: str) -> str:
     return path.join(
         path.dirname(path_to_file),
         path_to_concat
-        )
+    )
