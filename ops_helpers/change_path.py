@@ -10,7 +10,8 @@ def add_path(path_to_file: str, path_to_concat: str) -> None:
             path_to_concat
         )
     )
-    sys.path.insert(0, __PATH__)
+    if __PATH__ not in sys.path:
+        sys.path.insert(0, __PATH__)
 # [END manipulate file path]
 
 
