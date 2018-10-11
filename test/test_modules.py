@@ -1,8 +1,12 @@
 from os import getcwd, path
 import sys
+from copy import deepcopy
+import json
 import pytest
-from ops_helpers import concat_path, add_path, validate_event
+from ops_helpers import (
+    concat_path, add_path, validate_event, sanitize_output)
 from jsonschema.exceptions import ValidationError
+import pandas as pd
 
 __THISDIR__ = path.abspath(path.join(getcwd(), 'test'))
 __FUNCDIR__ = path.abspath(path.join(__THISDIR__, '../ops_helpers'))
@@ -46,3 +50,21 @@ class TestValidateEvent():
     def test_fail_no_schema(self):
         with pytest.raises(FileNotFoundError):
             validate_event('string_not_dict', '')
+
+
+class TestSanitizeOutput():
+    def test_success(self):
+        result = {'body': pd.DataFrame([1, 2, 3])}
+        sanitize_output(result)
+        json.loads(result['body'])
+
+    def test_fails(self):
+        with pytest.raises(TypeError):
+            result = {'body': pd.DataFrame([1, 2, 3])}
+            json.loads(result['body'])
+
+    def test_no_change(self):
+        result = {'body': 'not pd'}
+        result_copy = deepcopy(result)
+        sanitize_output(result)
+        result = result_copy

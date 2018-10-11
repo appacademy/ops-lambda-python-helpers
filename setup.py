@@ -7,7 +7,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 requires = [
-    'jsonschema>=2.6.0,<2.7.0'
+    'jsonschema>=2.6.0,<2.7.0',
+    'pandas>=0.23.0,<0.24.0'
 ]
 
 setup(
