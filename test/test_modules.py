@@ -8,6 +8,10 @@ from ops_helpers import (
 from jsonschema.exceptions import ValidationError
 import pandas as pd
 
+__PATH__ = path.abspath(path.join(
+    path.dirname(__file__), '..'))
+sys.path.insert(0, __PATH__)
+
 
 __THISDIR__ = path.abspath(path.join(getcwd(), 'test'))
 __FUNCDIR__ = path.abspath(path.join(__THISDIR__, '../ops_helpers'))
