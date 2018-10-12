@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -11,6 +11,8 @@ requires = [
     'pandas>=0.23.0,<0.24.0'
 ]
 
+packages = ['ops_helpers']
+
 setup(
     name="ops-lambda-python-helpers",
     version="0.0.5",
@@ -19,7 +21,7 @@ setup(
     description="Helper functions for use with ops lambda functions",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=find_packages(exclude="test",),
+    packages=packages,
     incude_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
