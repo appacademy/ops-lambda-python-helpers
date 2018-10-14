@@ -4,26 +4,26 @@ from copy import deepcopy
 import json
 import pytest
 from ops_helpers import (
-    concat_path, add_path, validate_event, sanitize_output)
+    concat_path, add_path, 
+    validate_event, sanitize_output,
+    retry_after_class_action)
 from jsonschema.exceptions import ValidationError
 import pandas as pd
 
-
+# [[START change_path tests]]
 __THISDIR__ = path.abspath(path.join(getcwd(), 'test'))
 __FUNCDIR__ = path.abspath(path.join(__THISDIR__, '../ops_helpers'))
 __MISSINGDIR__ = path.abspath(path.join(__THISDIR__, '../missing'))
 
-__SCHEMA__ = path.abspath(
-    path.join(path.dirname(__file__), 'mock_schema.json')
-)
-EVENT = {'body': "test"}
 
-
+# [START concat_path test]
 def test_concat_path():
     __PATH__ = concat_path(__file__, '..')
     assert __PATH__ == f'{__THISDIR__}/..'
+# [END concat_path test]
 
 
+# [START add_path tests]
 class TestAddPath():
     def test_fail_pre_add_path(self):
         assert __FUNCDIR__ not in sys.path
@@ -34,6 +34,16 @@ class TestAddPath():
 
     def test_missing_path(self):
         assert __MISSINGDIR__ not in sys.path
+# [END add_path tests]
+
+# [[END change_path tests]]
+
+
+# [START validate_event tests]
+EVENT = {'body': "test"}
+__SCHEMA__ = path.abspath(
+    path.join(path.dirname(__file__), 'mock_schema.json')
+)
 
 
 class TestValidateEvent():
@@ -51,8 +61,10 @@ class TestValidateEvent():
     def test_fail_no_schema(self):
         with pytest.raises(FileNotFoundError):
             validate_event('string_not_dict', '')
+# [END validate_event tests]
 
 
+# [START sanitize_output tests]
 class TestSanitizeOutput():
     def test_success(self):
         result = {'body': pd.DataFrame([1, 2, 3])}
@@ -69,3 +81,45 @@ class TestSanitizeOutput():
         result_copy = deepcopy(result)
         sanitize_output(result)
         result = result_copy
+# [END sanitize_output tests]
+
+
+# [START retry tests]
+class RetrySamplePass():
+    token = 'Invalid'
+
+    @retry_after_class_action(
+        max_tries=2, corrective_method='reset_token', error_type=ValueError)
+    def return_sometimes(self, val):
+        if self.token != 'Invalid':
+            raise ValueError
+        return val
+
+    def reset_token(self):
+        self.token = 'Valid'
+
+
+class RetrySampleFail():
+    token = 'Invalid'
+
+    @retry_after_class_action(
+        max_tries=2, corrective_method='reset_token', error_type=ValueError)
+    def return_sometimes(self, val):
+        if self.token != 'Valid':
+            raise ValueError
+        return val
+
+    def reset_token(self):
+        pass
+
+
+class TestRetry():
+    def test_succeed_after_correction(self):
+        sample = RetrySamplePass()
+        assert sample.return_sometimes('Hello') == 'Hello'
+
+    def test_fail_no_correction(self):
+        with pytest.raises(StopIteration):
+            sample = RetrySampleFail()
+            sample.return_sometimes('Hello')
+# [END retry tests]
