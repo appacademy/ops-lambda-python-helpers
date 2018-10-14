@@ -6,7 +6,7 @@ import pytest
 from ops_helpers import (
     concat_path, add_path,
     validate_event, sanitize_output,
-    retry_after_class_action)
+    retry_after_class_action, APIError)
 from jsonschema.exceptions import ValidationError
 import pandas as pd
 
@@ -163,12 +163,12 @@ class TestRetry():
         assert sample.return_eventually('Hello') == 'Hello'
 
     def test_fail_solo_run(self):
-        with pytest.raises(StopIteration):
+        with pytest.raises(APIError):
             sample = RetrySample()
             sample.return_solo_run('Hello')
 
     def test_fail_no_correction(self):
-        with pytest.raises(StopIteration):
+        with pytest.raises(APIError):
             sample = RetrySample()
             sample.return_no_correction('Hello')
 

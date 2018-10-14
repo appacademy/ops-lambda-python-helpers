@@ -1,6 +1,10 @@
 from functools import wraps
 
 
+class APIError(Exception):
+    pass
+
+
 def retry_after_class_action(
     max_tries: int,
     error_type: Exception,
@@ -51,7 +55,7 @@ def retry_after_class_action(
                 else:
                     break
             else:
-                raise StopIteration(
+                raise APIError(
                     f'Function still failed after {max_tries} attempts')
             return result
         return wrap
