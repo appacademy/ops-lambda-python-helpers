@@ -4,7 +4,7 @@ from copy import deepcopy
 import json
 import pytest
 from ops_helpers import (
-    concat_path, add_path, 
+    concat_path, add_path,
     validate_event, sanitize_output,
     retry_after_class_action)
 from jsonschema.exceptions import ValidationError
@@ -84,42 +84,107 @@ class TestSanitizeOutput():
 # [END sanitize_output tests]
 
 
-# [START retry tests]
-class RetrySamplePass():
+# [[START retry tests]]
+
+# [START simple retry tests]
+class RetrySample():
     token = 'Invalid'
 
     @retry_after_class_action(
-        max_tries=2, corrective_method='reset_token', error_type=ValueError)
-    def return_sometimes(self, val):
-        if self.token != 'Invalid':
+        max_tries=2, error_type=ValueError, corrective_method='reset_token')
+    def return_eventually(self, val):
+        if self.token != 'Valid':
             raise ValueError
         return val
 
     def reset_token(self):
         self.token = 'Valid'
 
-
-class RetrySampleFail():
-    token = 'Invalid'
-
     @retry_after_class_action(
-        max_tries=2, corrective_method='reset_token', error_type=ValueError)
-    def return_sometimes(self, val):
+        max_tries=1, error_type=ValueError, corrective_method='reset_token',)
+    def return_solo_run(self, val):
         if self.token != 'Valid':
             raise ValueError
         return val
 
-    def reset_token(self):
+    @retry_after_class_action(
+        max_tries=2, error_type=ValueError, corrective_method='reset_token_no_action',)
+    def return_no_correction(self, val):
+        if self.token != 'Valid':
+            raise ValueError
+        return val
+
+    @retry_after_class_action(
+        max_tries=2, error_type=ValueError, corrective_method='reset_token',)
+    def return_unanticipated_error_type(self, val):
+        if self.token != 'Valid':
+            raise TypeError
+        return val
+
+    def reset_token_no_action(self):
         pass
+# [END simple retry tests]
+
+
+# [START nested retry tests]
+class TokenManager():
+    def __init__(self):
+        self.value = 'Invalid'
+
+    def reset_token(self):
+        self.value = 'Valid'
+
+    def reset_token_no_action(self):
+        pass
+
+
+class RetrySampleNested():
+    def __init__(self):
+        self.token = TokenManager()
+
+    @retry_after_class_action(
+        max_tries=2, error_type=ValueError, corrective_method='token.reset_token')
+    def return_eventually(self, val):
+        if self.token.value != 'Valid':
+            raise ValueError
+        return val
+
+    @retry_after_class_action(
+        max_tries=2, error_type=ValueError, corrective_method='reset_token_no_action')
+    def return_wrong_method_reference(self, val):
+        if self.token.value != 'Valid':
+            raise ValueError
+        return val
 
 
 class TestRetry():
     def test_succeed_after_correction(self):
-        sample = RetrySamplePass()
-        assert sample.return_sometimes('Hello') == 'Hello'
+        sample = RetrySample()
+        assert sample.return_eventually('Hello') == 'Hello'
+
+    def test_fail_solo_run(self):
+        with pytest.raises(StopIteration):
+            sample = RetrySample()
+            sample.return_solo_run('Hello')
 
     def test_fail_no_correction(self):
         with pytest.raises(StopIteration):
-            sample = RetrySampleFail()
-            sample.return_sometimes('Hello')
-# [END retry tests]
+            sample = RetrySample()
+            sample.return_no_correction('Hello')
+
+    def test_fail_unanticipated_error_type(self):
+        with pytest.raises(TypeError):
+            sample = RetrySample()
+            sample.return_unanticipated_error_type('Hello')
+
+    def test_succeed_nested(self):
+        sample = RetrySampleNested()
+        assert sample.return_eventually('Hello') == 'Hello'
+
+    def test_fail_nested_wrong_attribute(self):
+        with pytest.raises(AttributeError):
+            sample = RetrySampleNested()
+            sample.return_wrong_method_reference('Hello')
+# [END nested retry tests]
+
+# [[END retry tests]]
