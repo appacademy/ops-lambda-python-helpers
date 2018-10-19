@@ -8,14 +8,15 @@ with open("README.md", "r") as fh:
 
 requires = [
     'jsonschema>=2.6.0,<2.7.0',
-    'pandas>=0.23.0,<0.24.0'
+    'pandas>=0.23.0,<0.24.0',
+    'boto3>=1.9.0, <1.10.0'
 ]
 
 packages = ['ops_helpers']
 
 setup(
     name="ops-lambda-python-helpers",
-    version="0.0.13",
+    version="0.0.14",
     author="David Fort",
     author_email="ptiger10@gmail.com",
     description="Helper functions for use with ops lambda functions",
