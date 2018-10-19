@@ -24,6 +24,7 @@ def get_secret_file(secret_name: str, region_name: str) -> Dict:
 
 
 def fetch_secrets(secret_name: str, region_name: str) -> None:
+    "Get secrets from AWS Secrets Manager; only works if AWS credentials are active env variables"
     try:
         get_secret_value_response = get_secret_file(secret_name, region_name)
     except ClientError as e:
