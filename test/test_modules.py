@@ -92,26 +92,33 @@ class RetrySample():
 
     @retry_after_class_action(
         max_tries=2, error_type=ValueError, corrective_method='reset_token')
-    def return_eventually(self, val):
+    def return_eventually_no_value_error(self, val):
         if self.token != 'Valid':
             raise ValueError
+        return val
+
+    @retry_after_class_action(
+        max_tries=2, error_type=KeyError, corrective_method='reset_token')
+    def return_eventually_no_key_error(self, val):
+        if self.token != 'Valid':
+            raise KeyError
         return val
 
     def reset_token(self):
         self.token = 'Valid'
 
     @retry_after_class_action(
-        max_tries=1, error_type=ValueError, corrective_method='reset_token',)
+        max_tries=1, error_type=TypeError, corrective_method='reset_token',)
     def return_solo_run(self, val):
         if self.token != 'Valid':
-            raise ValueError
+            raise TypeError
         return val
 
     @retry_after_class_action(
-        max_tries=2, error_type=ValueError, corrective_method='reset_token_no_action',)
+        max_tries=2, error_type=KeyError, corrective_method='reset_token_no_action',)
     def return_no_correction(self, val):
         if self.token != 'Valid':
-            raise ValueError
+            raise KeyError
         return val
 
     @retry_after_class_action(
@@ -150,7 +157,7 @@ class RetrySampleNested():
         return val
 
     @retry_after_class_action(
-        max_tries=2, error_type=ValueError, corrective_method='reset_token_no_action')
+        max_tries=2, error_type=KeyError, corrective_method='reset_token_no_action')
     def return_wrong_method_reference(self, val):
         if self.token.value != 'Valid':
             raise ValueError
@@ -158,9 +165,13 @@ class RetrySampleNested():
 
 
 class TestRetry():
-    def test_succeed_after_correction(self):
+    def test_succeed_after_correction_no_value_error(self):
         sample = RetrySample()
-        assert sample.return_eventually('Hello') == 'Hello'
+        assert sample.return_eventually_no_value_error('Hello') == 'Hello'
+
+    def test_succeed_after_correction_no_key_error(self):
+        sample = RetrySample()
+        assert sample.return_eventually_no_key_error('Hello') == 'Hello'
 
     def test_fail_solo_run(self):
         with pytest.raises(APIError):
