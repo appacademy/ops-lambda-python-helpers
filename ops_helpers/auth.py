@@ -45,8 +45,10 @@ def fetch_secrets(secret_name: str, region_name: str) -> None:
         # Depending on whether secret is a string or binary, one of these fields will be populated.
         if 'SecretString' in get_secret_value_response:
             secrets = json.loads(get_secret_value_response['SecretString'])
+            for key, value in secrets.items():
+                os.environ[key] = value
         else:
             decoded_binary_secret = base64.b64decode(
                 get_secret_value_response['SecretBinary'])
-    for key, value in secrets.items():
-        os.environ[key] = value
+            for key, value in decoded_binary_secret.items():
+                os.environ[key] = value
