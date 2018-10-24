@@ -52,3 +52,16 @@ def fetch_secrets(secret_name: str, region_name: str) -> None:
                 get_secret_value_response['SecretBinary'])
             for key, value in decoded_binary_secret.items():
                 os.environ[key] = value
+
+
+def invoke_lambda(department: str, service: str, stage: str, function: str):
+    try:
+        client = boto3.client('lambda')
+        r = client.invoke(
+            FunctionName=f'{department}-{service}-{stage}-{function}',
+            Payload=json.dumps({'body': 'LIST ACTIVE CUSTOMERS'}),
+            InvocationType='RequestResponse')
+        result = json.loads(r['Payload'].read())
+        return result
+    except KeyError:
+        raise KeyError('Function was not invoked correctly')
