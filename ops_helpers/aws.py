@@ -54,12 +54,15 @@ def fetch_secrets(secret_name: str, region_name: str) -> None:
                 os.environ[key] = value
 
 
-def invoke_lambda(department: str, service: str, stage: str, function: str):
+def invoke_lambda(
+    department: str, service: str, stage: str, function: str, body: dict
+):
+    "Invoke an internal a/A Lambda function"
     try:
         client = boto3.client('lambda')
         r = client.invoke(
             FunctionName=f'{department}-{service}-{stage}-{function}',
-            Payload=json.dumps({'body': 'LIST ACTIVE CUSTOMERS'}),
+            Payload=json.dumps(body),
             InvocationType='RequestResponse')
         result = json.loads(r['Payload'].read())
         return result
