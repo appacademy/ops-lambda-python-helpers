@@ -16,7 +16,7 @@ packages = ['ops_helpers']
 
 setup(
     name="ops-lambda-python-helpers",
-    version="0.0.20",
+    version="0.0.21",
     author="David Fort",
     author_email="ptiger10@gmail.com",
     description="Helper functions for use with ops lambda functions",

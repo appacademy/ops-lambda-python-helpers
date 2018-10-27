@@ -4,7 +4,7 @@ from copy import deepcopy
 import json
 import pytest
 from ops_helpers import (
-    concat_path, add_path,
+    concat_path, add_path, remove_path,
     validate_event, sanitize_output,
     retry_after_class_action, APIError)
 from jsonschema.exceptions import ValidationError
@@ -35,6 +35,17 @@ class TestAddPath():
     def test_missing_path(self):
         assert __MISSINGDIR__ not in sys.path
 # [END add_path tests]
+
+
+# [START remove_path tests]
+def test_succeed_remove_path():
+    add_path(__file__, 'path_to_remove')
+    assert path.abspath(path.join(__THISDIR__, 'path_to_remove')) in sys.path
+    remove_path(__file__, 'path_to_remove')
+    assert path.abspath(path.join(__THISDIR__, 'path_to_remove')) not in sys.path
+
+
+# [END remove_path tests]
 
 # [[END change_path tests]]
 
