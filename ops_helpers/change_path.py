@@ -15,15 +15,9 @@ def add_path(path_to_file: str, path_to_concat: str) -> None:
         sys.path.insert(0, __PATH__)
 
 
-def remove_path(path_to_file: str, path_to_concat: str) -> None:
-    __PATH__ = path.abspath(
-        concat_path(
-            path_to_file,
-            path_to_concat
-        )
-    )
-    if __PATH__ in sys.path:
-        sys.path.remove(__PATH__)
+def remove_path(basename_to_remove: str) -> None:
+    "Remove any paths with this basename; useful for handling pytest"
+    sys.path = [p for p in sys.path if path.basename(p) != basename_to_remove]
 # [END manipulate file path]
 
 

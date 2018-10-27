@@ -39,11 +39,11 @@ class TestAddPath():
 
 # [START remove_path tests]
 def test_succeed_remove_path():
+    TEST_PATH = path.abspath(path.join(__THISDIR__, 'path_to_remove'))
     add_path(__file__, 'path_to_remove')
-    assert path.abspath(path.join(__THISDIR__, 'path_to_remove')) in sys.path
-    remove_path(__file__, 'path_to_remove')
-    assert path.abspath(path.join(__THISDIR__, 'path_to_remove')) not in sys.path
-
+    assert TEST_PATH in sys.path
+    remove_path('path_to_remove')
+    assert TEST_PATH not in sys.path
 
 # [END remove_path tests]
 
