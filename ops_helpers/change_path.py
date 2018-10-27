@@ -16,7 +16,12 @@ def add_path(path_to_file: str, path_to_concat: str) -> None:
 
 
 def remove_path(basename_to_remove: str) -> None:
-    "Remove any paths with this basename; useful for handling pytest"
+    """
+    Remove any paths with this basename
+    Useful for handling pytest within a service containing many functions
+    Otherwise, the helper modules pollute the namespace during batch testing
+    Alternative is to require strict absolute imports throughout
+    """
     sys.path = [p for p in sys.path if path.basename(p) != basename_to_remove]
 # [END manipulate file path]
 

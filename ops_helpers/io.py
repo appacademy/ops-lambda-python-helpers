@@ -10,9 +10,9 @@ def validate_event(event: object, schema_path: str) -> None:
         schema = json.load(schema_file)
     try:
         validate(event, schema)
-    except ValidationError:
+    except ValidationError as e:
         raise ValidationError(
-            'Check event input against function documentation')
+            f'Check event against schema: {e}')
 # [END validate event/input]
 
 
