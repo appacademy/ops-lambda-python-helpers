@@ -5,7 +5,7 @@ import json
 import pytest
 from ops_helpers import (
     concat_path, add_path, remove_path,
-    validate_event, sanitize_output,
+    validate_event, get_kwargs, sanitize_output,
     retry_after_class_action, APIError)
 from jsonschema.exceptions import ValidationError
 import pandas as pd
@@ -73,6 +73,23 @@ class TestValidateEvent():
         with pytest.raises(FileNotFoundError):
             validate_event('string_not_dict', '')
 # [END validate_event tests]
+
+
+# [START get_kwargs tests]
+class TestGetKwargs():
+    def test_fail_no_dict(self):
+        with pytest.raises(TypeError):
+            event = ''
+            get_kwargs(event)
+
+    @pytest.mark.parametrize('event,expected', [
+        ({'not_body': 'test'}, {'not_body': 'test'}),
+        ({'body': 'test'}, {'event_body': 'test'}),
+        ({'body': {'k1': 'v1'}}, {'k1': 'v1'})
+    ])
+    def test_events(self, event, expected):
+        assert get_kwargs(event) == expected
+# [END get_kwargs tests]
 
 
 # [START sanitize_output tests]
