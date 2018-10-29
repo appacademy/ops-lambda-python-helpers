@@ -84,7 +84,7 @@ class TestGetKwargs():
 
     @pytest.mark.parametrize('event,expected', [
         ({'not_body': 'test'}, {'not_body': 'test'}),
-        ({'body': 'test'}, {'event_body': 'test'}),
+        ({'body': 'test'}, {'body': 'test'}),
         ({'body': {'k1': 'v1'}}, {'k1': 'v1'})
     ])
     def test_events(self, event, expected):

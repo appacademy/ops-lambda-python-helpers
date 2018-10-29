@@ -22,11 +22,8 @@ def get_kwargs(event: Dict) -> Dict:
     "Assumes event has a body, or else ignores"
     if not isinstance(event, dict):
         raise TypeError('event must be a dictionary')
-    if 'body' not in event:
-        return event
-    kwargs = {}
-    if isinstance(event['body'], str):
-        kwargs['event_body'] = event['body']
+    if 'body' not in event or isinstance(event['body'], str):
+        kwargs = event
     elif isinstance(event['body'], dict):
         kwargs = event['body']
     return kwargs
