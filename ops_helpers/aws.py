@@ -84,6 +84,5 @@ def invoke_lambda(
         result = (
             requests.post(url, data=data, headers=headers)
             .json()
-            ['result']
         )
         return result
