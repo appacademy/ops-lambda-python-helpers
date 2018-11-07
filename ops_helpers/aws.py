@@ -3,7 +3,9 @@ import json
 import base64
 from typing import Dict
 import boto3
+import requests
 from botocore.exceptions import ClientError
+from botocore.exceptions import NoRegionError
 
 
 def get_secret_file(secret_name: str, region_name: str) -> Dict:
@@ -72,3 +74,15 @@ def invoke_lambda(
         return result
     except KeyError:
         raise KeyError('Function was not invoked correctly')
+    # Exception handler for developers to execute locally without Boto3
+    except NoRegionError:
+        url = os.environ['endpoint']
+        token = os.environ['backup_token']
+        headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
+        data = json.dumps(body)
+        result = (
+            requests.post(url, data=data, headers=headers)
+            .json()
+            ['result']
+        )
+        return result
