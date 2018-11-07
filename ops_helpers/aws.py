@@ -64,10 +64,11 @@ def invoke_lambda(
     department: str, service: str, stage: str, function: str, body: dict
 ):
     "Invoke an internal a/A Lambda function"
+    function_stub = f'{department}-{service}-{stage}-{function}'
     try:
         client = boto3.client('lambda')
         r = client.invoke(
-            FunctionName=f'{department}-{service}-{stage}-{function}',
+            FunctionName=function_stub,
             Payload=json.dumps(body),
             InvocationType='RequestResponse')
         result = json.loads(r['Payload'].read())
@@ -76,7 +77,7 @@ def invoke_lambda(
         raise KeyError('Function was not invoked correctly')
     # Exception handler for developers to execute locally without Boto3
     except NoRegionError:
-        url = os.environ['endpoint']
+        url = f'https://api.appacademy.io/internal/v1/rest/{function_stub}'
         token = os.environ['backup_token']
         headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
         data = json.dumps(body)
