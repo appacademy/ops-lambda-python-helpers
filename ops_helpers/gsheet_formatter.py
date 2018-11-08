@@ -22,8 +22,8 @@ def get_spreadsheet_info(service, spreadsheet_id: str) -> dict:
     return service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
 
 
-def get_sheet_info_by_title(spreadsheet_id: str) -> Dict[str, int]:
-    sheets = get_spreadsheet_info(spreadsheet_id)
+def get_sheet_info_by_title(service, spreadsheet_id: str) -> Dict[str, int]:
+    sheets = get_spreadsheet_info(service, spreadsheet_id)
     title_to_id_map = {}
     for item in sheets['sheets']:
         sheet_title = item['properties']['title']
@@ -31,8 +31,8 @@ def get_sheet_info_by_title(spreadsheet_id: str) -> Dict[str, int]:
     return title_to_id_map
 
 
-def get_sheet_info_by_id(spreadsheet_id: str) -> Dict[int, NamedTuple]:
-    sheets = get_spreadsheet_info(spreadsheet_id)
+def get_sheet_info_by_id(service, spreadsheet_id: str) -> Dict[int, NamedTuple]:
+    sheets = get_spreadsheet_info(service, spreadsheet_id)
     sheet_dims = OrderedDict()
     Info = namedtuple('Info', ['n_rows', 'n_columns', 'title'])
     for item in sheets['sheets']:
@@ -44,13 +44,13 @@ def get_sheet_info_by_id(spreadsheet_id: str) -> Dict[int, NamedTuple]:
     return sheet_dims
 
 
-def get_conditional_format_rule_count(spreadsheet_id: str) -> Dict[int, int]:
+def get_conditional_format_rule_count(service, spreadsheet_id: str) -> Dict[int, int]:
     """
     Count the number of conditional formatting rules currently in each sheet
     Returns:
        {sheet_id: count_of_preexisting_conditional_format_rules}
     """
-    sheets = get_spreadsheet_info(spreadsheet_id)
+    sheets = get_spreadsheet_info(service, spreadsheet_id)
     rule_count = OrderedDict()
     for item in sheets['sheets']:
         sheet_id = item['properties']['sheetId']
