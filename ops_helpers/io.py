@@ -34,7 +34,7 @@ def get_kwargs(event: Dict) -> Dict:
 def sanitize_output(result) -> None:
     for key, value in result.items():
         if isinstance(value, pd.Series):
-            result[key] = value.to_frame().to_json()
+            result[key] = value.reset_index().to_json()
         if isinstance(value, pd.DataFrame):
             result[key] = value.to_json()
 # [END sanitize output]
