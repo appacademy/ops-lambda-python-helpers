@@ -94,8 +94,13 @@ class TestGetKwargs():
 
 # [START sanitize_output tests]
 class TestSanitizeOutput():
-    def test_success(self):
+    def test_success_df(self):
         result = {'body': pd.DataFrame([1, 2, 3])}
+        sanitize_output(result)
+        json.loads(result['body'])
+
+    def test_sucess_series(self):
+        result = {'body': pd.Series([1, 2, 3])}
         sanitize_output(result)
         json.loads(result['body'])
 
