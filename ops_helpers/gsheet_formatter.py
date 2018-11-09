@@ -180,7 +180,19 @@ def create_frozen_area_rule(sheet_id: int, row_count: int, column_count: int) ->
     return request
 
 
-def create_header_row_rule(sheet_id: int) -> Dict:
+def create_auto_resize_rule(sheet_id: int) -> dict:
+    request = {
+        "autoResizeDimensions": {
+            "dimensions": {
+                "sheetId": sheet_id,
+                "dimension": "COLUMNS"
+            }
+        }
+    }
+    return request
+
+
+def create_header_row_rule(sheet_id: int) -> dict:
 
     request = {
         'repeatCell': {
@@ -192,18 +204,18 @@ def create_header_row_rule(sheet_id: int) -> Dict:
             'cell': {
                 'userEnteredFormat': {
                     'backgroundColor': {
-                        'red': 0.0,
-                        'green': 0.0,
-                        'blue': 0.0
+                        'red': 0.93,
+                        'green': 0.93,
+                        'blue': 0.93
                     },
                     'horizontalAlignment': 'LEFT',
                     'textFormat': {
                         'foregroundColor': {
-                            'red': 1.0,
-                            'green': 1.0,
-                            'blue': 1.0
+                            'red': 0.0,
+                            'green': 0.0,
+                            'blue': 0.0
                         },
-                        'fontSize': 8,
+                        'fontSize': 11,
                         'bold': True
                     }
                 }
