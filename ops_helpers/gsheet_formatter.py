@@ -358,7 +358,7 @@ def delete_columns(service, spreadsheet_id: int, sheet_id: int, column_start: in
     )
 
 
-def delete_excess_cells(spreadsheet_id: int, sheet_id: int) -> None:
+def delete_excess_cells(service, spreadsheet_id: int, sheet_id: int) -> None:
     """
     Inspect contents of a sheet, delete empty rows and columns
     Args:
@@ -373,9 +373,9 @@ def delete_excess_cells(spreadsheet_id: int, sheet_id: int) -> None:
     rows_in_df += 1
     if info_by_id.n_rows > rows_in_df:
         print(f'{info_by_id.n_rows} is greater than {rows_in_df}, deleting rows')
-        delete_rows(spreadsheet_id, sheet_id, rows_in_df)
+        delete_rows(service, spreadsheet_id, sheet_id, rows_in_df)
 
     if info_by_id.n_columns > cols_in_df:
         print(f'{info_by_id.n_columns} is greater than {cols_in_df}, deleting columns')
-        delete_columns(spreadsheet_id, sheet_id, cols_in_df)
+        delete_columns(service, spreadsheet_id, sheet_id, cols_in_df)
 # [END sheet operations]
