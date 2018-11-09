@@ -367,7 +367,7 @@ def delete_excess_cells(service, spreadsheet_id: int, sheet_id: int) -> None:
     """
     info_by_id = get_sheet_info_by_id(service, spreadsheet_id)[sheet_id]
     range_name = info_by_id.title
-    df = get_values_from_sheets(spreadsheet_id, range_name)
+    df = get_values_from_sheets(service, spreadsheet_id, range_name)
     rows_in_df, cols_in_df = df.shape
     # Adjust for header row
     rows_in_df += 1
