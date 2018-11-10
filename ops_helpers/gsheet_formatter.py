@@ -44,6 +44,16 @@ def get_sheet_info_by_id(service, spreadsheet_id: str) -> Dict[int, NamedTuple]:
     return sheet_dims
 
 
+def get_hidden_sheets(service, spreadsheet_id):
+    # return service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+    sheets = get_spreadsheet_info(service, spreadsheet_id)['sheets']
+    hidden_sheets = []
+    for sheet in sheets:
+        if sheet['properties'].get('hidden'):
+            hidden_sheets.append(sheet['properties']['title'])
+    return hidden_sheets
+
+
 def get_conditional_format_rule_count(service, spreadsheet_id: str) -> Dict[int, int]:
     """
     Count the number of conditional formatting rules currently in each sheet
@@ -189,6 +199,25 @@ def create_auto_resize_rule(sheet_id: int) -> dict:
             }
         }
     }
+    return request
+
+
+def create_column_width_rule(sheet_id, column: int, width: int) -> dict:
+    request = {
+        "updateDimensionProperties": {
+            "range": {
+                "sheetId": sheet_id,
+                "dimension": "COLUMNS",
+                "startIndex": column,
+                "endIndex": column + 1
+            },
+            "properties": {
+                "pixelSize": width
+            },
+            "fields": "pixelSize"
+        }
+    }
+
     return request
 
 
@@ -378,4 +407,23 @@ def delete_excess_cells(service, spreadsheet_id: int, sheet_id: int) -> None:
     if info_by_id.n_columns > cols_in_df:
         print(f'{info_by_id.n_columns} is greater than {cols_in_df}, deleting columns')
         delete_columns(service, spreadsheet_id, sheet_id, cols_in_df)
+
+
+def hide_sheet(service, spreadsheet_id, sheet_id):
+    body = {
+        'requests': [{
+            'updateSheetProperties': {
+                'properties': {
+                    'sheetId': sheet_id,
+                    'hidden': True
+                },
+                'fields': 'hidden'
+            }
+        }]
+    }
+    (
+        service.spreadsheets()
+        .batchUpdate(spreadsheetId=spreadsheet_id, body=body)
+        .execute()
+    )
 # [END sheet operations]
