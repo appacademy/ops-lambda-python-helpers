@@ -4,8 +4,7 @@ import base64
 from typing import Dict
 import boto3
 import requests
-from botocore.exceptions import ClientError
-from botocore.exceptions import NoRegionError
+from botocore.exceptions import ClientError, NoRegionError
 
 
 def get_secret_file(secret_name: str, region_name: str) -> Dict:
@@ -76,7 +75,7 @@ def invoke_lambda(
     except KeyError:
         raise KeyError('Function was not invoked correctly')
     # Exception handler for developers to execute locally without Boto3
-    except NoRegionError:
+    except (NoRegionError, client.exceptions.ResourceNotFoundException):
         url = f'https://api.appacademy.io/internal/v1/rest/{function_stub}'
         token = os.environ['backup_token']
         headers = {'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'}
