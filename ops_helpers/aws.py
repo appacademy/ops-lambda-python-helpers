@@ -64,8 +64,8 @@ def invoke_lambda(
 ):
     "Invoke an internal a/A Lambda function"
     function_stub = f'{department}-{service}-{stage}-{function}'
-    try:
-        client = boto3.client('lambda')
+    client = boto3.client('lambda')
+    try:    
         r = client.invoke(
             FunctionName=function_stub,
             Payload=json.dumps(body),
